@@ -12,13 +12,13 @@ namespace WordToPng.Common
         public static List<String> GetFileList(string fullPath)
         {
             List<string> fullPathList = new List<string>();
-            if (File.Exists(fullPath) && fullPath.ToLower().EndsWith(".docx") && !fullPath.Contains("~$"))
+            if (File.Exists(fullPath) && (fullPath.ToLower().EndsWith(".docx") || fullPath.ToLower().EndsWith(".doc")) && !fullPath.Contains("~$"))
             {
                 fullPathList.Add(fullPath);
             }
             else if (Directory.Exists(fullPath))
             {
-                string[] files = Directory.GetFiles(fullPath, "*.docx", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(fullPath, "*.doc", SearchOption.AllDirectories);
                 if (files != null)
                 {
                     for (int j = 0; j < files.Length; j++)
