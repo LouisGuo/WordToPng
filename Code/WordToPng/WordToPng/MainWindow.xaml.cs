@@ -36,8 +36,14 @@ namespace WordToPng
             InitializeComponent();
             this.Topmost = true;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
             
+            if(App.fullPathList.Count>0)
+            {
+                StartRotate();
+                this.fullPathList.AddRange(App.fullPathList);
+                t = new Thread(doWork);
+                t.Start();  
+            }
         }
 
         private void ThisToImg(string from)
@@ -57,7 +63,7 @@ namespace WordToPng
 
             this.pic.RenderTransform = rtf;
 
-            DoubleAnimation dbAscending = new DoubleAnimation(0, 360, new Duration(TimeSpan.FromSeconds(1)));
+            DoubleAnimation dbAscending = new DoubleAnimation(0, -360, new Duration(TimeSpan.FromSeconds(1)));
             dbAscending.RepeatBehavior = RepeatBehavior.Forever;
 
             this.pic.RenderTransform.BeginAnimation(RotateTransform.AngleProperty, dbAscending);
@@ -71,51 +77,6 @@ namespace WordToPng
             }
         }
 
-        private void Window_DragOver(object sender, DragEventArgs e)
-        {
-            if (fullPathList.Count != 0)
-            {
-                MessageBox.Show("Please wait Until the ongoing work is done");
-                return;
-            }
-            StartRotate();
-            //添加要转换的文件列表
-            string fullPath = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-            
-            for (int i = 1; fullPath != null; i++)
-            {
-                if (File.Exists(fullPath) && fullPath.ToLower().EndsWith(".docx") && !fullPath.Contains("~$"))
-                {
-                    fullPathList.Add(fullPath);
-                }
-                else if (Directory.Exists(fullPath))
-                {
-                    string[] files = Directory.GetFiles(fullPath, "*.docx", SearchOption.AllDirectories);
-                    if(files!=null)
-                    {
-                        for (int j = 0; j < files.Length; j++)
-                        {
-                            if (!files[j].Contains("~$"))
-                                fullPathList.Add(files[j]);
-                        }
-                    }
-                }
-
-                try
-                {
-                    fullPath = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(i).ToString();
-                }
-                catch
-                {
-                    fullPath = null;
-                }
-
-            }
-
-
-            t = new Thread(doWork);
-            t.Start();  
-        }
 
 
         delegate void MyDelegate(int now,int sum);  
@@ -143,6 +104,10 @@ namespace WordToPng
             if(now==sum)
             {
                 EndRotate();
+                if(App.fullPathList.Count>0)
+                {
+                    this.Close();
+                }
             }
 
 
@@ -158,6 +123,51 @@ namespace WordToPng
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             base.DragMove();
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            this.backPic.Visibility = Visibility.Hidden;
+            if (fullPathList.Count != 0)
+            {
+                MessageBox.Show("Please wait Until the ongoing work is done");
+                return;
+            }
+            StartRotate();
+            //添加要转换的文件列表
+            string fullPath = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+
+            for (int i = 1; fullPath != null; i++)
+            {
+                fullPathList.AddRange(DocFile.GetFileList(fullPath));
+                try
+                {
+                    fullPath = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(i).ToString();
+                }
+                catch
+                {
+                    fullPath = null;
+                }
+
+            }
+
+
+            t = new Thread(doWork);
+            t.Start();  
+        }
+
+        private void Window_DragEnter(object sender, DragEventArgs e)
+        {
+            this.backPic.Visibility = Visibility.Visible;
+            this.label1.Content = "";
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Link;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
         }
 
 
