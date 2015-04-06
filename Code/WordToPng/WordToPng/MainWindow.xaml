@@ -1,7 +1,7 @@
 ﻿<Window x:Class="WordToPng.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="https://github.com/OWord/WordToPng" Height="100" Width="100" AllowDrop="True" AllowsTransparency="True" WindowStyle="None"  MouseLeftButtonDown="Window_MouseLeftButtonDown" Drop="Window_Drop" DragEnter="Window_DragEnter" >
+        Title="https://github.com/OWord/WordToPng" Height="100" Width="100" AllowDrop="True" AllowsTransparency="True" WindowStyle="None"  MouseLeftButtonDown="Window_MouseLeftButtonDown" Drop="Window_Drop" DragEnter="Window_DragEnter" KeyUp="Window_KeyUp" >
     <Window.Background>
         <ImageBrush />
     </Window.Background>

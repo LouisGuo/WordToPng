@@ -16,11 +16,23 @@ namespace WordToPng
     public partial class App : Application
     {
         public static List<string> fullPathList = new List<string>();
+        public static string itemName = "WordToPng";
+        //public string itemPath = AppDomain.CurrentDomain.DomainManager.EntryAssembly.Location + " %1";//当前exe文件夹路径
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            for (int i = 0; i < e.Args.Length; i++)
+            
+
+            if(e.Args.Length>0)
             {
-                fullPathList.AddRange(DocFile.GetFileList(e.Args[i]));
+                for (int i = 0; i < e.Args.Length; i++)
+                {
+                    fullPathList.AddRange(DocFile.GetFileList(e.Args[i]));
+                }
+            }
+            else
+            {
+                //RegistryKeyHelper.DeleteContextMenu(itemName);
+                //RegistryKeyHelper.AddFileContextMenuItem(itemName, itemPath);
             }
         }
     }
