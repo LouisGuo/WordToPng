@@ -39,6 +39,31 @@ namespace WordToPng.Common
             assoCreatedProgramKey.Close();
             rightCommondKey.Close();
             shellKey.Close();
+
+
+            //注册到所有文件
+            //RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"*\shell", true);
+            //注册到所有目录
+             shellKey = Registry.ClassesRoot.OpenSubKey(@"directory\shell", true);
+            //注册到文件夹
+            //RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey("directory", true).OpenSubKey("shell", true);
+            if (shellKey == null)
+            {
+                shellKey = Registry.ClassesRoot.CreateSubKey(@"*\shell");
+            }
+            rightCommondKey = shellKey.OpenSubKey(itemName);
+            if (rightCommondKey == null)
+            {
+                rightCommondKey = shellKey.CreateSubKey(itemName);
+            }
+
+            assoCreatedProgramKey = rightCommondKey.CreateSubKey("command");
+            assoCreatedProgramKey.SetValue(string.Empty, assoCreatedProgramFullPath);
+
+            assoCreatedProgramKey.Close();
+            rightCommondKey.Close();
+            shellKey.Close();
+
         }
 
         /// <summary>
@@ -49,6 +74,14 @@ namespace WordToPng.Common
         {
             RegistryKey shellKey = Registry.ClassesRoot.OpenSubKey(@"*\shell", true);
                 RegistryKey rightCommondKey = shellKey.OpenSubKey(itemName, true);
+                if (rightCommondKey != null)
+                {
+                    rightCommondKey.DeleteSubKeyTree("");
+                }
+
+
+                shellKey = Registry.ClassesRoot.OpenSubKey(@"directory\shell", true);
+                rightCommondKey = shellKey.OpenSubKey(itemName, true);
                 if (rightCommondKey != null)
                 {
                     rightCommondKey.DeleteSubKeyTree("");

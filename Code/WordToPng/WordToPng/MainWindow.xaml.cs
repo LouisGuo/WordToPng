@@ -174,9 +174,36 @@ namespace WordToPng
         {
             if(e.Key==Key.Delete)
             {
-                //RegistryKeyHelper.DeleteContextMenu(App.itemName);
+                try
+                {
+                    RegistryKeyHelper.DeleteContextMenu(App.itemName);
+                }
+                catch
+                {
+                    MessageBox.Show("要想删除右键菜单，请以管理员身份运行");
+                }
+                
                 this.Close();
             }
+            else if(e.Key==Key.Enter)
+            {
+                try
+                {
+                    RegistryKeyHelper.DeleteContextMenu(App.itemName);
+                    RegistryKeyHelper.AddFileContextMenuItem(App.itemName, App.itemPath);
+                    this.backPic.Visibility = Visibility.Visible;
+                }
+                catch
+                {
+                    MessageBox.Show("要想添加右键菜单，请以管理员身份运行");
+                }
+                
+            }
+        }
+
+        private void Window_DragLeave(object sender, DragEventArgs e)
+        {
+            this.backPic.Visibility = Visibility.Hidden;
         }
 
 
